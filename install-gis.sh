@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# How to install:
+# > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
+# > install-gis-ubuntu/install-gis.sh
+
 # install non-gis specific tools
 echo "** Installing useful non-GIS tools..."
 #sudo apt-get install guake # guake for retro bash shell dropdown
@@ -50,7 +54,6 @@ sudo apt-get install pandoc -y
 sudo apt-get install libjpeg62 -y
 sudo apt-get install unzip -y
 sudo apt-get install curl -y
-sudo apt-get install openjdk-7-* -y
 sudo apt-get install gedit -y
 sudo apt-get install jags -y
 sudo apt-get install imagemagick -y
