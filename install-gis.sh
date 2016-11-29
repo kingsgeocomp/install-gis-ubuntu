@@ -4,6 +4,8 @@
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
+STABLE = "Yes"
+
 # install non-gis specific tools
 echo "** Installing useful non-GIS tools..."
 #sudo apt-get install guake # guake for retro bash shell dropdown
@@ -12,7 +14,7 @@ sudo apt-get install software-properties-common # to ease adding new ppas
 
 # from:  https://medium.com/@ramiroaznar/how-to-install-the-most-common-open-source-gis-applications-on-ubuntu-dbe9d612347b
 # add repos
-if [ $STABLE = "No" ]; then
+if [ "$STABLE" = "No" ]; then
 	echo "** Specifying unstable UbuntuGIS repo to get latest QGIS..."
 	echo " "
 	echo "** Removing any installed version of QGIS..."
