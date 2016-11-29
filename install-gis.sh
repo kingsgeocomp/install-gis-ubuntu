@@ -14,12 +14,12 @@ sudo apt-get update
 echo "** Installing PostgreSQL..."
 sudo apt-get install -y postgresql postgresql-contrib
 echo "** Installing QGIS..."
-sudo apt-get install qgis python-qgis qgis-plugin-grass
+sudo apt-get install -y qgis python-qgis qgis-plugin-grass
 echo "** Installing JOSM..."
 echo deb https://josm.openstreetmap.de/apt alldist universe | sudo tee /etc/apt/sources.list.d/josm.list > /dev/null
 wget -q https://josm.openstreetmap.de/josm-apt.key -O- | sudo apt-key add -
 sudo apt-get update
-sudo apt install josm
+sudo apt install -y josm
 echo "** Installing Lib-Proj and Lib-GEOS..."
 sudo apt-get install -y libproj-dev libgeos++-dev
 # install gdal
