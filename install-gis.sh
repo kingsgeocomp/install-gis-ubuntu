@@ -12,9 +12,16 @@ sudo apt-get install software-properties-common # to ease adding new ppas
 
 # from:  https://medium.com/@ramiroaznar/how-to-install-the-most-common-open-source-gis-applications-on-ubuntu-dbe9d612347b
 # add repos
-echo "** Specifying unstable UbuntuGIS repo to get latest QGIS..."
-sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-sudo apt-get update
+if [ $STABLE = "No" ]; then
+	echo "** Specifying unstable UbuntuGIS repo to get latest QGIS..."
+	echo " "
+	echo "** Removing any installed version of QGIS..."
+	sudo apt-get -y remove qgis
+	sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+	sudo apt-get update
+else
+	echo "** Sticking to stable UbuntuGIS repo..."
+fi
 echo "** Installing PostgreSQL..."
 sudo apt-get install -y postgresql postgresql-contrib
 echo "** Installing QGIS..."
@@ -81,5 +88,5 @@ conda-env create -f install_gds_stack.yml
 
 # done.
 echo "All done."
-echo "Type: `source activate gds_test` before running Python in bash"
+echo "Type: 'source activate gds_test' before running Python in bash"
 
