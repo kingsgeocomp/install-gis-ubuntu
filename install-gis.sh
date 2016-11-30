@@ -14,9 +14,10 @@ INSTALLJ  = "N" # Install Java & JOSM
 INSTALLPY = "Y" # Install Python & Py-GIS tools
 MINIMAL   = "Y" # Don't install lots of useful add-ons
 
+printf "****************\n"
 printf "Your version of Ubuntu is:\n"
 lsb_release -a | grep -P "(Codename|Description)"
-printf "\n"
+printf "****************\n"
 
 # Refresh repos automatically
 sudo apt-get update -y 
@@ -95,6 +96,8 @@ if [ "$UPGRADE" = "Y" ]; then
 	printf "* Upgrading system...\n"
 	sudo apt-get update  -y
 	sudo apt-get upgrade  -y
+else
+	printf "Skipping system upgrade...\n"
 fi
 # install R/RStudio - see
 # http://stackoverflow.com/questions/29667330
@@ -134,12 +137,14 @@ if [ "$INSTALLPY" = "Y" ]; then
 	
 	printf 
 	printf "\n\n******************\n"
-	printf "You may need toa dd the following to your .bashrc file:\n"
-	printf "
-export DEFAULTPATH=$PATH\n
-export CONDAPATH=$HOME/anaconda2/bin:$PATH\n
-export QGISPATH=$PATH\n
-export PATH=$DEFAULTPATH\n"
+	printf "You may need to add the following to your .bashrc file:\n"
+	read -d '' configfile <<- EOF
+	export DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+	export CONDAPATH=$HOME/anaconda2/bin:$PATH
+	export QGISPATH=$PATH
+	export PATH=$DEFAULTPATH
+EOF 
+	echo "$configfile"
 
 else
 	printf "** Skipping Python...\n"
