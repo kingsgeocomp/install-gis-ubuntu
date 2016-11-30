@@ -4,7 +4,7 @@
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
-STABLE    = "Y" # Use unstable UbuntuGIS repos
+UNSTABLE  = "N" # Use unstable UbuntuGIS repos
 EXTRAS    = "Y" # Useful extras for full env
 UPGRADE   = "N" # Upgrade entire system
 INSTALLR  = "N" # Install R & R-Studio
@@ -12,6 +12,8 @@ INSTALLPY = "Y" # Install Python & Py-GIS tools
 
 # Refresh repos automatically
 sudo apt-get update -y 
+# We need git right from the start
+sudo apt-get install git -y 
 
 # install non-gis specific tools
 echo "*************"
@@ -31,7 +33,7 @@ fi
 echo "*************"
 echo "* Installing GIS-related tools..."
 
-if [ "$STABLE" = "N" ]; then
+if [ "$UNSTABLE" = "Y" ]; then
 	echo "** Specifying unstable UbuntuGIS repo to get latest QGIS..."
 	echo " "
 	echo "** Removing any installed version of QGIS..."
@@ -81,7 +83,6 @@ sudo apt-get install libopenblas-base -y
 sudo apt-get install libxml2-dev -y
 sudo apt-get install make -y
 sudo apt-get install gcc -y
-sudo apt-get install git -y
 sudo apt-get install pandoc -y
 sudo apt-get install libjpeg62 -y
 sudo apt-get install unzip -y
