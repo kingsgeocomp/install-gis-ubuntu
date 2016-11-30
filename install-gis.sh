@@ -107,8 +107,11 @@ fi
 ############################################
 ############### Install GDAL ###############
 ############################################
-printf "\n** Installing Lib-Proj and Lib-GEOS...\n"
-sudo apt-get install -y libproj-dev libgeos-dev libgeos++-dev libgeos-c1v5
+printf "\n** Installing Lib-Proj and Lib-GEOS++...\n"
+PROJ4INSTALLED=$(dpkg-query -W --showformat='${Status}\n' libproj-dev 2>/dev/null | grep -c "ok installed")
+GEOSINSTALLED=$(dpkg-query -W --showformat='${Status}\n' libgeos++-dev 2>/dev/null | grep -c "ok installed")
+if [ "$PROJ4INSTALLED" = 0 ] && [ "$GEOSINSTALLED" = 0 ]; then 
+	sudo apt-get install -y libproj-dev libgeos++-dev
 
 # Now for GDAL
 if [ "$GDAL" = "Y" ]; then
