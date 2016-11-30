@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # How to install:
-# > sudo apt-get update -y
+# > sudo apt-get -qq update -y
 # > sudo apt-get install git
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
@@ -27,7 +27,7 @@ lsb_release -a | grep -P "(Codename|Description)"
 printf "****************\n"
 
 # Refresh repos automatically
-sudo apt-get update -y 
+sudo apt-get -qq update -y 
 # We need git right from the start
 sudo apt-get install git -y 
 
@@ -74,12 +74,12 @@ if [ "$QGIS" = "Y" ]; then
 	if [ "$UNSTABLE" = "Y" ]; then
 		printf "** Specifying unstable UbuntuGIS repo to get latest QGIS...\n"
 		sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-		sudo apt-get update
+		sudo apt-get -qq update
 		sudo apt-get install -y qgis python-qgis qgis-plugin-grass
 	else
 		printf "** Sticking to stable install...\n"
 		sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-stable
-		sudo apt-get update
+		sudo apt-get -qq update
 		sudo apt-get install -y qgis python-qgis qgis-plugin-grass
 	fi
 fi
@@ -100,18 +100,19 @@ if [ "$INSTALLJ" = "Y" ]; then
 	sudo apt-get install -y openjdk-8-jre 
 	printf deb https://josm.openstreetmap.de/apt alldist universe | sudo tee /etc/apt/sources.list.d/josm.list > /dev/null
 	wget -q https://josm.openstreetmap.de/josm-apt.key -O- | sudo apt-key add -
-	sudo apt-get update
+	sudo apt-get -qq update
 	sudo apt install -y josm
 fi 
 
 ############################################
 ############### Install GDAL ###############
 ############################################
-printf "\n** Installing Lib-Proj and Lib-GEOS++...\n"
 PROJ4INSTALLED=$(dpkg-query -W --showformat='${Status}\n' libproj-dev 2>/dev/null | grep -c "ok installed")
 GEOSINSTALLED=$(dpkg-query -W --showformat='${Status}\n' libgeos++-dev 2>/dev/null | grep -c "ok installed")
 if [ "$PROJ4INSTALLED" = 0 ] && [ "$GEOSINSTALLED" = 0 ]; then 
+	printf "\n** Installing Lib-Proj and Lib-GEOS++...\n"
 	sudo apt-get install -y libproj-dev libgeos++-dev
+fi
 
 # Now for GDAL
 if [ "$GDAL" = "Y" ]; then
@@ -135,7 +136,7 @@ fi
 if [ "$UPGRADE" = "Y" ]; then
 	printf "\n\n*************\n"
 	printf "* Upgrading system...\n"
-	sudo apt-get update  -y
+	sudo apt-get -qq update  -y
 	sudo apt-get upgrade  -y
 else
 	printf "Skipping system upgrade...\n"
@@ -148,7 +149,7 @@ fi
 if [ "$MINIMAL" = "N" ]; then
 	printf "\n\n*************\n"
 	printf "Installing dependencies for workflow...\n"
-	sudo apt-get update  -y
+	sudo apt-get -qq update  -y
 	sudo apt-get install libgstreamer0.10-0 -y
 	sudo apt-get install libgstreamer-plugins-base0.10-dev -y
 	sudo apt-get install libcurl4-openssl-dev -y
@@ -165,6 +166,8 @@ if [ "$MINIMAL" = "N" ]; then
 	sudo apt-get install jags -y
 	sudo apt-get install imagemagick -y
 	sudo apt-get install libv8-dev -y
+else 
+	print "\n* Making minimal installation...\n"
 fi 
 
 ############################################
@@ -178,26 +181,13 @@ if [ "$INSTALLPY" = "Y" ]; then
 	conda install --yes psutil yaml pyyaml
 	printf "** Installing GDS stack...\n"
 	conda-env create -f install_gds_stack.yml
-	
-	printf 
-	printf "\n\n******************\n"
-	printf "You may need to add the following to your .bashrc file:\n"
-	# From: http://stackoverflow.com/questions/10969953/
-	read -d '' configfile <<- EOF
-	export DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-	export CONDAPATH=$HOME/anaconda2/bin:$PATH
-	export QGISPATH=$PATH
-	export PATH=$DEFAULTPATH
-EOF 
-	echo "$configfile"
-
 else
 	printf "** Skipping Python...\n"
 fi
 
 # more non GIS but programming stuff - optional, add your own stuff here
 # sudo add-apt-repository ppa:neovim-ppa/unstable # nvim: new version of vim
-# sudo apt-get update # see https://github.com/neovim/neovim/wiki/Installing-Neovim
+# sudo apt-get -qq update # see https://github.com/neovim/neovim/wiki/Installing-Neovim
 # sudo apt-get install neovim
 # sudo apt-get install zsh # nice evolution of bash
 # sudo apt-get install git-core # from https://www.thinkingmedia.ca/2014/10/how-to-install-oh-my-zsh-on-ubuntu-14/
@@ -208,5 +198,22 @@ fi
 printf "\n\n**************\n"
 printf "All done.\n"
 printf "Type: 'source activate gds_test' before running Python in the Terminal.\n"
-printf "Note that the full Anaconda Python and QGIS may not live together happily without some tweaking of the startup script for QGIS.\n"
+printf "\n"
+printf "\n\n******************\n"
+# EOF from: http://stackoverflow.com/questions/10969953/
+cat <<-EOF
+Note that the full Anaconda Python install and QGIS may not live together happily without some tweaking of the startup script for QGIS. That\'s because Anaconda doesn\'t have the QGIS libraries installed and QGIS can\'t see it\'s own libraries when Anaconda Python is in the path. One way to work around this (as best I can tell) is to add the following to your \.bashrc (or \.bash_profile) file:
 
+	export DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+	export CONDAPATH=\$HOME/anaconda2/bin:$PATH
+	export QGISPATH=\$PATH
+	export PATH=\$DEFAULTPATH
+
+To launch Anaconda you would need to prepend the command:
+	export PATH=\$CONDAPATH
+	
+To launch QGIS you would need to prepend the command:
+	export PATH=\$QGISPATH
+
+It\'s probably easiest to leave the path as \$CONDAPATH and then just edit the launcher for QGIS so that it launches in the right environment. 
+EOF
