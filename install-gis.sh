@@ -198,20 +198,20 @@ fi
 cat <<-EOF
 **************
 All done.
-Type: \'source activate gds_test\' before running Python in the Terminal.
+Type: 'source activate gds_test' before running Python in the Terminal.
 **************
-Note that the full Anaconda Python install and QGIS may not live together happily without some tweaking of the startup script for QGIS. That\'s because Anaconda doesn\'t have the QGIS libraries installed and QGIS can\'t see it\'s own libraries when Anaconda Python is in the path. One way to work around this (as best I can tell) is to add the following to your \.bashrc (or \.bash_profile) file:
+Note that the full Anaconda Python install and QGIS may not live together happily without some tweaking of the startup script for QGIS. That's because Anaconda doesn't have the QGIS libraries installed and QGIS can't see it's own libraries when Anaconda Python is in the path. One way to work around this (as best I can tell) is to add the following to your .bashrc (or .bash_profile) file:
 
 	export DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-	export CONDAPATH=\$HOME/anaconda2/bin:$PATH
-	export QGISPATH=\$PATH
-	export PATH=\$DEFAULTPATH
+	export CONDAPATH=$HOME/anaconda2/bin:$DEFAULTPATH
+	export QGISPATH=$DEFAULTPATH
+	export PATH=$CONDAPATH
 
 To launch Anaconda you would need to prepend the command:
-	export PATH=\$CONDAPATH
+	export PATH=$CONDAPATH
 	
 To launch QGIS you would need to prepend the command:
-	export PATH=\$QGISPATH
+	export PATH=$QGISPATH
 
-It\'s probably easiest to leave the path as \$CONDAPATH and then just edit the launcher for QGIS so that it launches in the right environment. 
+It's probably easiest to leave the path as $CONDAPATH and then just edit the launcher for QGIS so that it launches in the right environment. 
 EOF
