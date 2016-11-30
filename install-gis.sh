@@ -4,17 +4,34 @@
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
-STABLE = "Yes"
+STABLE    = "Y" # Use unstable UbuntuGIS repos
+EXTRAS    = "Y" # Useful extras for full env
+UPGRADE   = "N" # Upgrade entire system
+INSTALLR  = "N" # Install R & R-Studio
+INSTALLPY = "Y" # Install Python & Py-GIS tools
+
+# Refresh repos automatically
+sudo apt-get update -y 
 
 # install non-gis specific tools
-echo "** Installing useful non-GIS tools..."
-#sudo apt-get install guake # guake for retro bash shell dropdown
-#sudo apt-get install texlive-extra-utils
+echo "*************"
+echo "* Installing useful non-GIS tools..."
 sudo apt-get install software-properties-common # to ease adding new ppas
+
+echo "** Installing Dropbox..." # grab dropbox
+cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+sudo apt-get install dropbox
+if [ "$EXTRAS" = "Y" ]; then
+	sudo apt-get install guake # guake for retro bash shell dropdown
+	sudo apt-get install texlive-extra-utils
+fi
 
 # from:  https://medium.com/@ramiroaznar/how-to-install-the-most-common-open-source-gis-applications-on-ubuntu-dbe9d612347b
 # add repos
-if [ "$STABLE" = "No" ]; then
+echo "*************"
+echo "* Installing GIS-related tools..."
+
+if [ "$STABLE" = "N" ]; then
 	echo "** Specifying unstable UbuntuGIS repo to get latest QGIS..."
 	echo " "
 	echo "** Removing any installed version of QGIS..."
@@ -44,10 +61,16 @@ if [ $FLAV = "xenial" ]; then
   bash install-gdal.sh
 fi
 
-
+echo "*************"
+echo "* Upgrading system..."
+if [ "$UPGRADE" = "Y" ]; then
+	sudo apt-get update  -y
+	sudo apt-get upgrade  -y
+fi
 # install R/RStudio - see
 # http://stackoverflow.com/questions/29667330
-echo "Installing dependancies for workflow..."
+echo "*************"
+echo "Installing dependencies for workflow..."
 sudo apt-get update  -y
 # sudo apt-get upgrade  -y
 sudo apt-get install libgstreamer0.10-0 -y
@@ -71,13 +94,17 @@ sudo apt-get install libv8-dev -y
 ############################################
 ### Python Geographic Data Science Stack ###
 ############################################
-echo "** Switching to Python GDS stack..."
-git clone https://github.com/darribas/gds_env.git
-cd gds_env
-conda update --yes conda
-conda install --yes psutil yaml pyyaml
-echo "** Installing GDS stack..."
-conda-env create -f install_gds_stack.yml
+if [ "$INSTALLPY" = "Y" ]; then
+	echo "** Switching to Python GDS stack..."
+	git clone https://github.com/darribas/gds_env.git
+	cd gds_env
+	conda update --yes conda
+	conda install --yes psutil yaml pyyaml
+	echo "** Installing GDS stack..."
+	conda-env create -f install_gds_stack.yml
+else
+	echo "** Skipping Python..."
+fi
 
 # more non GIS but programming stuff - optional, add your own stuff here
 # sudo add-apt-repository ppa:neovim-ppa/unstable # nvim: new version of vim
