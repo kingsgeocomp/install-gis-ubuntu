@@ -18,9 +18,6 @@ printf "Your version of Ubuntu is:\n"
 lsb_release -a | grep -P "(Codename|Description)"
 printf "\n"
 
-# In case we're not there already
-cd install-gis-ubuntu/
-
 # Refresh repos automatically
 sudo apt-get update -y 
 # We need git right from the start
@@ -87,6 +84,9 @@ FLAV=$(lsb_release -c | awk 'BEGIN { FS="\t" }; {print $2}')
 if [ $FLAV = "xenial" ]; then
   sudo apt-get install -y gdal-bin libgdal-dev libgdal1-dev 
 else
+	# In case we're not there already -- 
+	# helps with GDAL script below
+	cd install-gis-ubuntu/
   bash install-gdal.sh
 fi
 
