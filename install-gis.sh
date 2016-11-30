@@ -1,12 +1,15 @@
 #!/bin/bash
 
 # How to install:
+# > sudo apt-get update -y
+# > sudo apt-get install git
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
 DROPBOX="N" # Install Dropbox
 UNSTABLE="N" # Use unstable UbuntuGIS repos
 QGIS="N" # Update QGIS? Overrides Unstable
+POSTGRES="N" # Install PostgreSQL
 GDAL="N" # Install GDAL from source
 EXTRAS="N" # Useful extras for full env
 UPGRADE="N" # Upgrade entire system
@@ -80,8 +83,13 @@ if [ "$QGIS" = "Y" ]; then
 		sudo apt-get install -y qgis python-qgis qgis-plugin-grass
 	fi
 fi
-printf "\n** Installing PostgreSQL...\n"
-sudo apt-get install -y postgresql postgresql-contrib
+
+if [ "$POSTGRES" = "Y" ]; then 
+	printf "\n** Installing PostgreSQL...\n"
+	sudo apt-get install -y postgresql postgresql-contrib
+else
+	printf "\n** Skipping Postgres installation\n"
+fi
 
 ############################################
 ########### Install Java & JOSM ############
