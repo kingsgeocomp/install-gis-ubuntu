@@ -4,11 +4,21 @@
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
+
 UNSTABLE  = "N" # Use unstable UbuntuGIS repos
 EXTRAS    = "Y" # Useful extras for full env
 UPGRADE   = "N" # Upgrade entire system
-INSTALLR  = "N" # Install R & R-Studio
+INSTALLR  = "N" # Install R & R-Studio 
+INSTALLJ  = "N" # Install Java & JOSM
 INSTALLPY = "Y" # Install Python & Py-GIS tools
+MINIMAL   = "Y" # Don't install lots of useful add-ons
+
+printf "Your version of Ubuntu is:\n"
+lsb_release -a | grep -P "(Codename|Description)"
+printf "\n"
+
+# In case we're not there already
+cd install-gis-ubuntu/
 
 # Refresh repos automatically
 sudo apt-get update -y 
@@ -16,11 +26,12 @@ sudo apt-get update -y
 sudo apt-get install git -y 
 
 # install non-gis specific tools
-echo "*************"
-echo "* Installing useful non-GIS tools..."
-sudo apt-get install software-properties-common # to ease adding new ppas
+printf "\n\n*************\n"
+printf "* Installing useful non-GIS tools...\n"
+sudo apt-get install -y software-properties-common # to ease adding new ppas
+sudo apt-get install -y python-software-properties # Seems to help with QGIS
 
-echo "** Installing Dropbox..." # grab dropbox
+printf "\n** Installing Dropbox...\n" # grab dropbox
 cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 sudo apt-get install dropbox
 if [ "$EXTRAS" = "Y" ]; then
@@ -30,81 +41,89 @@ fi
 
 # from:  https://medium.com/@ramiroaznar/how-to-install-the-most-common-open-source-gis-applications-on-ubuntu-dbe9d612347b
 # add repos
-echo "*************"
-echo "* Installing GIS-related tools..."
+printf "\n\n*************\n"
+printf "* Installing GIS-related tools...\n"
 
 if [ "$UNSTABLE" = "Y" ]; then
-	echo "** Specifying unstable UbuntuGIS repo to get latest QGIS..."
-	echo " "
-	echo "** Removing any installed version of QGIS..."
-	sudo apt-get -y remove qgis
+	printf "** Specifying unstable UbuntuGIS repo to get latest QGIS...\n"
+	printf "*** Removing any installed version of QGIS...\n"
+	sudo apt-get remove -y qgis python-qgis qgis-plugin-grass
+	sudo apt-get autoremove -y
+	printf "*** Adding unstable repo...\n"
 	sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
 	sudo apt-get update
+	sudo apt-get install -y qgis python-qgis qgis-plugin-grass
 else
-	echo "** Sticking to stable UbuntuGIS repo..."
+	printf "** Sticking to stable install...\n"
+	sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+	sudo apt-get update
+	sudo apt-get install -y qgis python-qgis qgis-plugin-grass
 fi
-echo "** Installing PostgreSQL..."
+printf "\n** Installing PostgreSQL...\n"
 sudo apt-get install -y postgresql postgresql-contrib
-echo "** Installing QGIS..."
-sudo apt-get install -y qgis python-qgis qgis-plugin-grass
-echo "** Installing JOSM..."
-echo deb https://josm.openstreetmap.de/apt alldist universe | sudo tee /etc/apt/sources.list.d/josm.list > /dev/null
-wget -q https://josm.openstreetmap.de/josm-apt.key -O- | sudo apt-key add -
-sudo apt-get update
-sudo apt install -y josm
-echo "** Installing Lib-Proj and Lib-GEOS..."
+
+if [ "$INSTALLJ" = "Y" ]; then
+	printf "\n** Installing JOSM...\n"
+	sudo apt-get install -y openjdk-8-jre 
+	printf deb https://josm.openstreetmap.de/apt alldist universe | sudo tee /etc/apt/sources.list.d/josm.list > /dev/null
+	wget -q https://josm.openstreetmap.de/josm-apt.key -O- | sudo apt-key add -
+	sudo apt-get update
+	sudo apt install -y josm
+fi 
+printf "\n** Installing Lib-Proj and Lib-GEOS...\n"
 sudo apt-get install -y libproj-dev libgeos++-dev
 # install gdal
-echo "** Installing GDAL..."
-FLAV=$(eval echo `lsb_release -c` | rev | cut -d ' ' -f1 | rev) 
+printf "\n** Installing GDAL...\n"
+FLAV=$(eval printf `lsb_release -c` | rev | cut -d ' ' -f1 | rev) 
 if [ $FLAV = "xenial" ]; then
   sudo apt-get install -y gdal-bin libgdal-dev libgdal1-dev 
   else
   bash install-gdal.sh
 fi
 
-echo "*************"
-echo "* Upgrading system..."
 if [ "$UPGRADE" = "Y" ]; then
+	printf "\n\n*************\n"
+	printf "* Upgrading system...\n"
 	sudo apt-get update  -y
 	sudo apt-get upgrade  -y
 fi
 # install R/RStudio - see
 # http://stackoverflow.com/questions/29667330
-echo "*************"
-echo "Installing dependencies for workflow..."
-sudo apt-get update  -y
-# sudo apt-get upgrade  -y
-sudo apt-get install libgstreamer0.10-0 -y
-sudo apt-get install libgstreamer-plugins-base0.10-dev -y
-sudo apt-get install libcurl4-openssl-dev -y
-sudo apt-get install libssl-dev -y
-sudo apt-get install libopenblas-base -y
-sudo apt-get install libxml2-dev -y
-sudo apt-get install make -y
-sudo apt-get install gcc -y
-sudo apt-get install pandoc -y
-sudo apt-get install libjpeg62 -y
-sudo apt-get install unzip -y
-sudo apt-get install curl -y
-sudo apt-get install gedit -y
-sudo apt-get install jags -y
-sudo apt-get install imagemagick -y
-sudo apt-get install libv8-dev -y
+if [ "$MINIMAL" = "N" ]; then
+	printf "\n\n*************\n"
+	printf "Installing dependencies for workflow...\n"
+	sudo apt-get update  -y
+	sudo apt-get install libgstreamer0.10-0 -y
+	sudo apt-get install libgstreamer-plugins-base0.10-dev -y
+	sudo apt-get install libcurl4-openssl-dev -y
+	sudo apt-get install libssl-dev -y
+	sudo apt-get install libopenblas-base -y
+	sudo apt-get install libxml2-dev -y
+	sudo apt-get install make -y
+	sudo apt-get install gcc -y
+	sudo apt-get install pandoc -y
+	sudo apt-get install libjpeg62 -y
+	sudo apt-get install unzip -y
+	sudo apt-get install curl -y
+	sudo apt-get install gedit -y
+	sudo apt-get install jags -y
+	sudo apt-get install imagemagick -y
+	sudo apt-get install libv8-dev -y
+fi 
 
 ############################################
 ### Python Geographic Data Science Stack ###
 ############################################
 if [ "$INSTALLPY" = "Y" ]; then
-	echo "** Switching to Python GDS stack..."
+	printf "\n** Switching to Python GDS stack...\n"
 	git clone https://github.com/darribas/gds_env.git
 	cd gds_env
 	conda update --yes conda
 	conda install --yes psutil yaml pyyaml
-	echo "** Installing GDS stack..."
+	printf "** Installing GDS stack...\n"
 	conda-env create -f install_gds_stack.yml
 else
-	echo "** Skipping Python..."
+	printf "** Skipping Python...\n"
 fi
 
 # more non GIS but programming stuff - optional, add your own stuff here
@@ -117,6 +136,8 @@ fi
 # sudo curl -L http://install.ohmyz.sh | sh
 
 # done.
-echo "All done."
-echo "Type: 'source activate gds_test' before running Python in bash"
+printf "\n\n**************\n"
+printf "All done.\n"
+printf "Type: 'source activate gds_test' before running Python in the Terminal.\n"
+printf "Note that the full Anaconda Python and QGIS may not live together happily without some tweaking of the startup script for QGIS.\n"
 
