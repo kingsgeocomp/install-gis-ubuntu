@@ -10,13 +10,13 @@ DROPBOX="N" # Install Dropbox
 UNSTABLE="N" # Use unstable UbuntuGIS repos
 QGIS="N" # Update QGIS? Overrides Unstable
 POSTGRES="N" # Install PostgreSQL
-GDAL="N" # Install GDAL from source
+GDAL="Y" # Install GDAL from source
 EXTRAS="N" # Useful extras for full env
 UPGRADE="N" # Upgrade entire system
 INSTALLR="N" # Install R & R-Studio 
 INSTALLJ="N" # Install Java & JOSM
 INSTALLPY="Y" # Install Python & Py-GIS tools
-MINIMAL="Y" # Don't install lots of useful add-ons
+MINIMAL="N" # Don't install lots of useful add-ons
 
 # From http://stackoverflow.com/questions/1298066/
 QGISINSTALLED=$(dpkg-query -W --showformat='${Status}\n' qgis 2>/dev/null | grep -c "ok installed")
