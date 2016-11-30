@@ -4,15 +4,18 @@
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
-DROPBOX   = "N" # Install Dropbox
-UNSTABLE  = "N" # Use unstable UbuntuGIS repos
-QGIS      = "N" # Update QGIS? Overrides Unstable.
-EXTRAS    = "N" # Useful extras for full env
-UPGRADE   = "N" # Upgrade entire system
-INSTALLR  = "N" # Install R & R-Studio 
-INSTALLJ  = "N" # Install Java & JOSM
-INSTALLPY = "Y" # Install Python & Py-GIS tools
-MINIMAL   = "Y" # Don't install lots of useful add-ons
+DROPBOX="N" # Install Dropbox
+UNSTABLE="N" # Use unstable UbuntuGIS repos
+QGIS="N" # Update QGIS? Overrides Unstable.
+EXTRAS="N" # Useful extras for full env
+UPGRADE="N" # Upgrade entire system
+INSTALLR="N" # Install R & R-Studio 
+INSTALLJ="N" # Install Java & JOSM
+INSTALLPY="Y" # Install Python & Py-GIS tools
+MINIMAL="Y" # Don't install lots of useful add-ons
+
+# From http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
+QGISINSTALLED=$(dpkg-query -W --showformat='${Status}\n' qgis 2>/dev/null | grep -c "ok installed")
 
 printf "****************\n"
 printf "Your version of Ubuntu is:\n"
@@ -45,8 +48,6 @@ fi
 printf "\n\n*************\n"
 printf "* Installing GIS-related tools...\n"
 
-# From http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
-QGISINSTALLED = $(dpkg-query -W --showformat='${Status}\n' qgis 2>/dev/null | grep -c "ok installed")
 if [ "$QGIS" = "Y" ]; then 
 	if [ "$QGISINSTALLED" = 1 ]; then
 		printf "*** Removing any installed version of QGIS...\n"
