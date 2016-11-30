@@ -194,14 +194,12 @@ fi
 # Now you can install Oh My Zsh.
 # sudo curl -L http://install.ohmyz.sh | sh
 
-# done.
-printf "\n\n**************\n"
-printf "All done.\n"
-printf "Type: 'source activate gds_test' before running Python in the Terminal.\n"
-printf "\n"
-printf "\n\n******************\n"
 # EOF from: http://stackoverflow.com/questions/10969953/
 cat <<-EOF
+**************
+All done.
+Type: \'source activate gds_test\' before running Python in the Terminal.
+**************
 Note that the full Anaconda Python install and QGIS may not live together happily without some tweaking of the startup script for QGIS. That\'s because Anaconda doesn\'t have the QGIS libraries installed and QGIS can\'t see it\'s own libraries when Anaconda Python is in the path. One way to work around this (as best I can tell) is to add the following to your \.bashrc (or \.bash_profile) file:
 
 	export DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
