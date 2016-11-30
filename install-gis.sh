@@ -6,7 +6,7 @@
 
 DROPBOX   = "N" # Install Dropbox
 UNSTABLE  = "N" # Use unstable UbuntuGIS repos
-QGIS      = "Y" # Update QGIS? Overrides Unstable.
+QGIS      = "N" # Update QGIS? Overrides Unstable.
 EXTRAS    = "N" # Useful extras for full env
 UPGRADE   = "N" # Upgrade entire system
 INSTALLR  = "N" # Install R & R-Studio 
