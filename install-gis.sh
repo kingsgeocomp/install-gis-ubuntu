@@ -4,9 +4,9 @@
 # > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
 # > install-gis-ubuntu/install-gis.sh
 
-
+DROPBOX   = "N" # Install Dropbox
 UNSTABLE  = "N" # Use unstable UbuntuGIS repos
-EXTRAS    = "Y" # Useful extras for full env
+EXTRAS    = "N" # Useful extras for full env
 UPGRADE   = "N" # Upgrade entire system
 INSTALLR  = "N" # Install R & R-Studio 
 INSTALLJ  = "N" # Install Java & JOSM
@@ -31,9 +31,11 @@ printf "* Installing useful non-GIS tools...\n"
 sudo apt-get install -y software-properties-common # to ease adding new ppas
 sudo apt-get install -y python-software-properties # Seems to help with QGIS
 
-printf "\n** Installing Dropbox...\n" # grab dropbox
-cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
-sudo apt-get install dropbox
+if [ "$DROPBOX" = "Y" ]; then
+	printf "\n** Installing Dropbox...\n" # grab dropbox
+	cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+	sudo apt-get install dropbox
+fi
 if [ "$EXTRAS" = "Y" ]; then
 	sudo apt-get install guake # guake for retro bash shell dropdown
 	sudo apt-get install texlive-extra-utils
