@@ -73,13 +73,14 @@ if [ "$INSTALLJ" = "Y" ]; then
 	sudo apt install -y josm
 fi 
 printf "\n** Installing Lib-Proj and Lib-GEOS...\n"
-sudo apt-get install -y libproj-dev libgeos++-dev
+sudo apt-get install -y libproj-dev libgeos-dev libgeos++-dev libgeos-c1v5
+
 # install gdal
 printf "\n** Installing GDAL...\n"
-FLAV=$(eval printf `lsb_release -c` | rev | cut -d ' ' -f1 | rev) 
+FLAV=$(lsb_release -c | awk 'BEGIN { FS="\t" }; {print $2}') 
 if [ $FLAV = "xenial" ]; then
   sudo apt-get install -y gdal-bin libgdal-dev libgdal1-dev 
-  else
+else
   bash install-gdal.sh
 fi
 
@@ -132,7 +133,7 @@ if [ "$INSTALLPY" = "Y" ]; then
 export DEFAULTPATH=$PATH\n
 export CONDAPATH=$HOME/anaconda2/bin:$PATH\n
 export QGISPATH=$PATH\n
-export PATH=$CONDAPATH\n"
+export PATH=$DEFAULTPATH\n"
 
 else
 	printf "** Skipping Python...\n"
