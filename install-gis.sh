@@ -6,7 +6,8 @@
 
 DROPBOX="N" # Install Dropbox
 UNSTABLE="N" # Use unstable UbuntuGIS repos
-QGIS="N" # Update QGIS? Overrides Unstable.
+QGIS="N" # Update QGIS? Overrides Unstable
+GDAL="N" # Install GDAL from source
 EXTRAS="N" # Useful extras for full env
 UPGRADE="N" # Upgrade entire system
 INSTALLR="N" # Install R & R-Studio 
@@ -14,7 +15,7 @@ INSTALLJ="N" # Install Java & JOSM
 INSTALLPY="Y" # Install Python & Py-GIS tools
 MINIMAL="Y" # Don't install lots of useful add-ons
 
-# From http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
+# From http://stackoverflow.com/questions/1298066/
 QGISINSTALLED=$(dpkg-query -W --showformat='${Status}\n' qgis 2>/dev/null | grep -c "ok installed")
 
 printf "****************\n"
@@ -33,11 +34,18 @@ printf "* Installing useful non-GIS tools...\n"
 sudo apt-get install -y software-properties-common # to ease adding new ppas
 sudo apt-get install -y python-software-properties # Seems to help with QGIS
 
+############################################
+############# Install Dropbox ##############
+############################################
 if [ "$DROPBOX" = "Y" ]; then
 	printf "\n** Installing Dropbox...\n" # grab dropbox
 	cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 	sudo apt-get install dropbox
 fi
+
+############################################
+############ Install TeX/Guake #############
+############################################
 if [ "$EXTRAS" = "Y" ]; then
 	sudo apt-get install guake # guake for retro bash shell dropdown
 	sudo apt-get install texlive-extra-utils
@@ -48,12 +56,18 @@ fi
 printf "\n\n*************\n"
 printf "* Installing GIS-related tools...\n"
 
+############################################
+########### Upgrade/Install QGIS ###########
+############################################
 if [ "$QGIS" = "Y" ]; then 
+	# We remove QGIS if it's already installed 
+	# regardless of which repo we're using...
 	if [ "$QGISINSTALLED" = 1 ]; then
-		printf "*** Removing any installed version of QGIS...\n"
+		printf "** Removing any installed version of QGIS...\n"
 		sudo apt-get remove -y qgis python-qgis qgis-plugin-grass
 		sudo apt-get autoremove -y
 	fi
+	# Use the unstable repo?
 	if [ "$UNSTABLE" = "Y" ]; then
 		printf "** Specifying unstable UbuntuGIS repo to get latest QGIS...\n"
 		sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
@@ -69,7 +83,11 @@ fi
 printf "\n** Installing PostgreSQL...\n"
 sudo apt-get install -y postgresql postgresql-contrib
 
+############################################
+########### Install Java & JOSM ############
+############################################
 if [ "$INSTALLJ" = "Y" ]; then
+	# Need a JDK/JRE installed to install JOSM
 	printf "\n** Installing JOSM...\n"
 	sudo apt-get install -y openjdk-8-jre 
 	printf deb https://josm.openstreetmap.de/apt alldist universe | sudo tee /etc/apt/sources.list.d/josm.list > /dev/null
@@ -77,21 +95,32 @@ if [ "$INSTALLJ" = "Y" ]; then
 	sudo apt-get update
 	sudo apt install -y josm
 fi 
+
+############################################
+############### Install GDAL ###############
+############################################
 printf "\n** Installing Lib-Proj and Lib-GEOS...\n"
 sudo apt-get install -y libproj-dev libgeos-dev libgeos++-dev libgeos-c1v5
 
-# install gdal
-printf "\n** Installing GDAL...\n"
-FLAV=$(lsb_release -c | awk 'BEGIN { FS="\t" }; {print $2}') 
-if [ $FLAV = "xenial" ]; then
-  sudo apt-get install -y gdal-bin libgdal-dev libgdal1-dev 
-else
-	# In case we're not there already -- 
-	# helps with GDAL script below
-	cd install-gis-ubuntu/
-  bash install-gdal.sh
+# Now for GDAL
+if [ "$GDAL" = "Y" ]; then
+	printf "\n** Installing GDAL...\n"
+	FLAV=$(lsb_release -c | awk 'BEGIN { FS="\t" }; {print $2}') 
+	if [ $FLAV = "xenial" ]; then
+  	sudo apt-get install -y gdal-bin libgdal-dev libgdal1-dev 
+	else
+		# In case we're not there already -- 
+		# helps with GDAL script below
+		cd install-gis-ubuntu/
+  	bash install-gdal.sh
+	fi
+else 
+	printf "\n** Skipping GDAL installation...\n"
 fi
 
+############################################
+################ Upgrade O/S ###############
+############################################
 if [ "$UPGRADE" = "Y" ]; then
 	printf "\n\n*************\n"
 	printf "* Upgrading system...\n"
@@ -100,7 +129,10 @@ if [ "$UPGRADE" = "Y" ]; then
 else
 	printf "Skipping system upgrade...\n"
 fi
-# install R/RStudio - see
+
+############################################
+########### R & R-Studio Content ###########
+############################################
 # http://stackoverflow.com/questions/29667330
 if [ "$MINIMAL" = "N" ]; then
 	printf "\n\n*************\n"
@@ -139,6 +171,7 @@ if [ "$INSTALLPY" = "Y" ]; then
 	printf 
 	printf "\n\n******************\n"
 	printf "You may need to add the following to your .bashrc file:\n"
+	# From: http://stackoverflow.com/questions/10969953/
 	read -d '' configfile <<- EOF
 	export DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 	export CONDAPATH=$HOME/anaconda2/bin:$PATH
