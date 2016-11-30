@@ -6,6 +6,7 @@
 
 DROPBOX   = "N" # Install Dropbox
 UNSTABLE  = "N" # Use unstable UbuntuGIS repos
+QGIS      = "Y" # Update QGIS? Overrides Unstable.
 EXTRAS    = "N" # Useful extras for full env
 UPGRADE   = "N" # Upgrade entire system
 INSTALLR  = "N" # Install R & R-Studio 
@@ -46,20 +47,25 @@ fi
 printf "\n\n*************\n"
 printf "* Installing GIS-related tools...\n"
 
-if [ "$UNSTABLE" = "Y" ]; then
-	printf "** Specifying unstable UbuntuGIS repo to get latest QGIS...\n"
-	printf "*** Removing any installed version of QGIS...\n"
-	sudo apt-get remove -y qgis python-qgis qgis-plugin-grass
-	sudo apt-get autoremove -y
-	printf "*** Adding unstable repo...\n"
-	sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-	sudo apt-get update
-	sudo apt-get install -y qgis python-qgis qgis-plugin-grass
-else
-	printf "** Sticking to stable install...\n"
-	sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-	sudo apt-get update
-	sudo apt-get install -y qgis python-qgis qgis-plugin-grass
+# From http://stackoverflow.com/questions/1298066/check-if-a-package-is-installed-and-then-install-it-if-its-not
+QGISINSTALLED = $(dpkg-query -W --showformat='${Status}\n' qgis 2>/dev/null | grep -c "ok installed")
+if [ "$QGIS" = "Y" ]; then 
+	if [ "$QGISINSTALLED" = 1 ]; then
+		printf "*** Removing any installed version of QGIS...\n"
+		sudo apt-get remove -y qgis python-qgis qgis-plugin-grass
+		sudo apt-get autoremove -y
+	fi
+	if [ "$UNSTABLE" = "Y" ]; then
+		printf "** Specifying unstable UbuntuGIS repo to get latest QGIS...\n"
+		sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+		sudo apt-get update
+		sudo apt-get install -y qgis python-qgis qgis-plugin-grass
+	else
+		printf "** Sticking to stable install...\n"
+		sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-stable
+		sudo apt-get update
+		sudo apt-get install -y qgis python-qgis qgis-plugin-grass
+	fi
 fi
 printf "\n** Installing PostgreSQL...\n"
 sudo apt-get install -y postgresql postgresql-contrib
