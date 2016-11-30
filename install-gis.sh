@@ -122,6 +122,16 @@ if [ "$INSTALLPY" = "Y" ]; then
 	conda install --yes psutil yaml pyyaml
 	printf "** Installing GDS stack...\n"
 	conda-env create -f install_gds_stack.yml
+	
+	printf 
+	printf "\n\n******************\n"
+	printf "You may need toa dd the following to your .bashrc file:\n"
+	printf "
+export DEFAULTPATH=$PATH\n
+export CONDAPATH=$HOME/anaconda2/bin:$PATH\n
+export QGISPATH=$PATH\n
+export PATH=$CONDAPATH\n"
+
 else
 	printf "** Skipping Python...\n"
 fi
