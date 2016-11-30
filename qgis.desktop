@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=QGIS Desktop
+Version=1.0
+GenericName=Geographic Information System
+GenericName[en_GB]=QGIS
+Icon=qgis
+TryExec=/usr/bin/qgis
+Exec=env PATH=$QGISPATH /usr/bin/qgis
+Terminal=false
+StartupNotify=true
+Categories=Qt;Education;Science;Geography;
+MimeType=application/x-qgis-project;image/tiff;image/jpeg;image/jp2;application/x-raster-aig;application/x-raster-ecw;application/x-raster-mrsid;application/x-mapinfo-mif;application/x-esri-shape;
+Keywords=map;globe;postgis;wms;wfs;ogc;osgeo;
