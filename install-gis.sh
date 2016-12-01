@@ -42,6 +42,7 @@ sudo apt-get install -y python-software-properties # Seems to help with QGIS
 ############################################
 if [ "$DROPBOX" = "Y" ]; then
 	printf "\n** Installing Dropbox...\n" # grab dropbox
+	cd ~ && rm -rf .dropbox-dist
 	cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 	sudo apt-get install dropbox
 fi
