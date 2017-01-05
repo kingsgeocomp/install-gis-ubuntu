@@ -182,6 +182,8 @@ if [ "$INSTALLPY" = "Y" ]; then
 	conda install --yes psutil yaml pyyaml
 	printf "** Installing GDS stack...\n"
 	conda-env create -f install_gds_stack.yml
+	conda install --yes basemap
+	conda create --name spats --clone gds_test
 else
 	printf "** Skipping Python...\n"
 fi
