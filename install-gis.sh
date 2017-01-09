@@ -183,7 +183,7 @@ if [ "$INSTALLPY" = "Y" ]; then
 	printf "** Installing GDS stack...\n"
 	conda-env create -f install_gds_stack.yml
 	conda install --yes basemap
-	conda install -c conda-forge pysal=1.13.0
+	conda install --yes -c conda-forge pysal=1.13.0
 	conda install --yes --channel https://conda.anaconda.org/anaconda beautifulsoup4
 	conda install --yes html5lib
 	conda create --name spats --clone gds_test
