@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # How to install:
-# > git clone https://github.com/kingsgeocomp/install-gis-ubuntu.git
+# > git clone https://github.com/kingsgeocomp/install-gis-mac.git
 # > install-gis-ubuntu/install-gis-mac.sh
 
 GDAL="N" # Install GDAL from source

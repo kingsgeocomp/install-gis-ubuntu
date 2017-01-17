@@ -183,9 +183,10 @@ if [ "$INSTALLPY" = "Y" ]; then
 	printf "** Installing GDS stack...\n"
 	conda-env create -f install_gds_stack.yml
 	conda install --yes basemap
-	conda install --yes -c conda-forge pysal=1.13.0
-	conda install --yes --channel https://conda.anaconda.org/anaconda beautifulsoup4
-	conda install --yes html5lib
+        conda install --yes -c conda-forge pysal=1.13.0
+        conda install --yes -c conda-forge folium
+        conda install --yes -c conda-forge beautifulsoup4
+        conda install --yes html5lib
 	conda create --name spats --clone gds_test
 else
 	printf "** Skipping Python...\n"
@@ -204,7 +205,7 @@ fi
 cat <<-EOF
 **************
 All done.
-Type: 'source activate gds_test' before running Python in the Terminal.
+Type: 'source activate spats' before running Python in the Terminal.
 **************
 Note that the full Anaconda Python install and QGIS may not live together happily without some tweaking of the startup script for QGIS. That's because Anaconda doesn't have the QGIS libraries installed and QGIS can't see it's own libraries when Anaconda Python is in the path. One way to work around this (as best I can tell) is to add the following to your .bashrc (or .bash_profile) file:
 
